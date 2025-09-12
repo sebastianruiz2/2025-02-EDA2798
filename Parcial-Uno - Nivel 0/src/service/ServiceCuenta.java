@@ -17,11 +17,10 @@ public class ServiceCuenta implements IServiceCuenta {
         cuentas.add(new Corriente("1003", 125, 500.00,0.5));
         cuentas.add(new Corriente("1004", 126, 750.00,0.7));
         cuentas.add(new Ahorro("1005", 127, 3000.00,"2024-10-22"));
-        cuentas.add(new Ahorro("1005", 127, 3000.00,"2024-10-22"));
-        cuentas.add(new Ahorro("1005", 127, 3000.00,"2024-10-22"));
+        cuentas.add(new Ahorro("1005", 127, 3000.00,"2024-10-22"));  
         cuentas.add(new Ahorro("1006", 128, 1200.00,"2023-12-02"));
-        cuentas.add(new Ahorro("1007", 129, 1800.00,"2023-12-00"));
-        cuentas.add(new Ahorro("1008", 130, 950.00,"2024-2009"));
+        cuentas.add(new Ahorro("1007", 129, 1800.00,"2023-12-01"));
+        cuentas.add(new Ahorro("1008", 130, 950.00,"2024-09-20"));
         cuentas.add(new Ahorro("1009", 131, 4000.00,"2024-12-22"));
         cuentas.add(new Corriente("1010", 132, 600.00,0.4));
         cuentas.add(new Corriente("1011", 133, 2200.00,0.5));
@@ -29,7 +28,7 @@ public class ServiceCuenta implements IServiceCuenta {
         cuentas.add(new Corriente("1013", 135, 1100.00,0.5));
         cuentas.add(new Corriente("1014", 136, 2700.00,0.3));
         cuentas.add(new Ahorro("1015", 137, 800.00,"2025-05-05"));
-        cuentas.add(new Corriente("1016", 138, 1600.00,03));
+        cuentas.add(new Corriente("1016", 138, 1600.00,0.3)); 
         cuentas.add(new Corriente("1017", 139, 2500.00,0.3));
         cuentas.add(new Ahorro("1018", 140, 1000.00,"2024-11-05"));
         cuentas.add(new Ahorro("1019", 141, 1900.00,"2025-01-10"));
@@ -38,7 +37,46 @@ public class ServiceCuenta implements IServiceCuenta {
 
     @Override
     public List<Cuenta> obtenerCuentas() {
-        return cuentas;
+        return new ArrayList<>(cuentas); 
     }
 
+    @Override
+    public List<Ahorro> listarAhorros() {
+        List<Ahorro> ahorros = new ArrayList<>();
+        for (Cuenta c : cuentas) {
+            if (c instanceof Ahorro) ahorros.add((Ahorro) c);
+        }
+        return ahorros;
+    }
+
+    @Override
+    public List<Corriente> listarCorrientes() {
+        List<Corriente> corrientes = new ArrayList<>();
+        for (Cuenta c : cuentas) {
+            if (c instanceof Corriente) corrientes.add((Corriente) c);
+        }
+        return corrientes;
+    }
+
+    @Override
+    public void crearAhorro(Ahorro ahorro) {
+        cuentas.add(ahorro);
+    }
+
+    @Override
+    public void crearCorriente(Corriente corriente) {
+        cuentas.add(corriente);
+    }
+
+    @Override
+    public Cuenta buscarPorNumeroCuenta(String numeroCuenta) {
+        if (numeroCuenta == null) return null;
+        numeroCuenta = numeroCuenta.trim();
+        for (Cuenta c : cuentas) {
+            if (numeroCuenta.equals(c.getNumeroCuenta())) {
+                return c;
+            }
+        }
+        return null;
+    }
 }

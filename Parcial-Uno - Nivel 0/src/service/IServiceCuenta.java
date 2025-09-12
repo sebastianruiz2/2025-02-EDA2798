@@ -1,13 +1,15 @@
 package service;
 
 import java.util.List;
-
+import domain.Ahorro;
+import domain.Corriente;
 import domain.Cuenta;
 
 public interface IServiceCuenta {
-    List<Cuenta> obtenerCuentas(); // Implementar
-    Cuenta obtenernumeroCuenta(String numeroCuenta); // Implementar
-    void crearCuenta(Cuenta cuenta); // Implementar
-    void retirarDinero(String numeroCuenta,double retiro); // NO Implementar
-    void ingresarDinero(String numeroCuenta,double ingreso); // NO Implementar
+    List<Cuenta> obtenerCuentas();
+    List<Ahorro> listarAhorros();
+    List<Corriente> listarCorrientes();
+    void crearAhorro(Ahorro ahorro);
+    void crearCorriente(Corriente corriente);
+    Cuenta buscarPorNumeroCuenta(String numeroCuenta);
 }
