@@ -4,22 +4,9 @@ import model.Account;
 import services.AccountService;
 
 public class App {
-    private static AccountService accountService=new AccountService();
-    public static void main(String[] args) throws Exception {
-        /*accountService.findAll().stream().forEach(a->System.out.println(a));
-        Account account = new Account("ACC010", "Johanny Valencia", "johanny.valencia@example.com", "3000000001",
-                "Savings", "Calle 20 de Turbaco-Bolivar");
-        accountService.save(account);
-        System.out.println("*".repeat(100));
-        accountService.findAll().stream().forEach(a->System.out.println(a));
-        System.out.println("-".repeat(100));
-        accountService.findById("ACC009").ifPresentOrElse(
-                acc -> System.out.println("Encontrado: " + acc),
-                () -> System.out.println(" account number no encontrado."));
-        accountService.deleteById("ACC010");
-        System.out.println("/".repeat(100));
-        accountService.findAll().stream().forEach(System.out::println);*/
+    private static AccountService accountService = new AccountService();
 
+    public static void main(String[] args) throws Exception {
         try (Scanner sc = new Scanner(System.in)) {
             boolean running = true;
             while (running) {
@@ -40,17 +27,16 @@ public class App {
                         break;
                     case "0":
                         running = false;
-                        System.out.println("Saliendo...");
+                        System.out.println("Saliendo del sistema...");
                         break;
                     default:
-                        System.out.println("Opción no válida. Intente de nuevo.");
+                        System.out.println("❌ Opción no válida. Intente de nuevo.");
                 }
             }
         }
-
     }
 
-        private static void printMainMenu() {
+    private static void printMainMenu() {
         System.out.println("\n=== Menú Principal ===");
         System.out.println("1. Account");
         System.out.println("2. Balance");
@@ -65,45 +51,80 @@ public class App {
         while (!back) {
             printCrudMenu(entityName);
             String opt = sc.nextLine().trim();
+
             switch (opt) {
-                case "1":
-                    System.out.println("[" + entityName + "] Crear - placeholder (pedir datos e invocar servicio)");
-                    //Deben tomar los datos por consola, usar Scanner
-                    Account account = new Account("ACC010", "Johanny Valencia", "johanny.valencia@example.com", "3000000001", "Savings", "Calle 20 de Turbaco-Bolivar"); 
-                    accountService.save(account); 
+                case "1": // CREATE
+                    System.out.println("[" + entityName + "] Crear nueva cuenta");
+                    System.out.print("Número de cuenta: ");
+                    String accountNumber = sc.nextLine().trim();
+                    System.out.print("Nombre del titular: ");
+                    String holderName = sc.nextLine().trim();
+                    System.out.print("Email: ");
+                    String email = sc.nextLine().trim();
+                    System.out.print("Teléfono: ");
+                    String phone = sc.nextLine().trim();
+                    System.out.print("Tipo de cuenta (Savings/Checking): ");
+                    String accountType = sc.nextLine().trim();
+                    System.out.print("Dirección: ");
+                    String address = sc.nextLine().trim();
+
+                    Account newAccount = new Account(accountNumber, holderName, email, phone, accountType, address);
+                    accountService.save(newAccount);
+                    System.out.println("✅ Cuenta creada exitosamente.");
                     break;
-                case "2":
-                    System.out.print("[" + entityName + "] Leer por id - ingrese id: ");
+
+                case "2": // READ BY ID
+                    System.out.print("Ingrese el número de cuenta a buscar: ");
                     String id = sc.nextLine().trim();
-                    System.out.println("Buscar " + entityName + " con id=" + id + " - placeholder");
                     accountService.findById(id).ifPresentOrElse(
-                        acc -> System.out.println("Encontrado: " + acc),
-                        () -> System.out.println(entityName + " con id=" + id + " no encontrado.")
+                        acc -> System.out.println("✅ Encontrado: " + acc),
+                        () -> System.out.println("❌ No se encontró ninguna cuenta con id=" + id)
                     );
                     break;
-                case "3":
-                    System.out.println("[" + entityName + "] Listar todos - placeholder");
-                    accountService.findAll().stream().forEach(System.out::println);
+
+                case "3": // LIST ALL
+                    System.out.println("\n📋 Listado de cuentas registradas:");
+                    accountService.findAll().forEach(System.out::println);
                     break;
-                case "4":
-                    System.out.print("[" + entityName + "] Actualizar - ingrese id: ");
+
+                case "4": // UPDATE
+                    System.out.print("Ingrese el número de cuenta que desea actualizar: ");
                     String idUp = sc.nextLine().trim();
-                    System.out.println("Actualizar " + entityName + " id=" + idUp + " - placeholder");
-                    //Deben tomar los datos por consola, usar Scanner
-                    Account updateAccount = new Account("ACC010", "Johanny Valencia", "johanny.valencia@example.com", "3000000001", "Savings", "Calle 20 de Turbaco-Bolivar"); 
-                    accountService.save(updateAccount);
+                    accountService.findById(idUp).ifPresentOrElse(existing -> {
+                        System.out.println("Cuenta actual: " + existing);
+                        System.out.print("Nuevo nombre del titular: ");
+                        String newHolder = sc.nextLine().trim();
+                        System.out.print("Nuevo email: ");
+                        String newEmail = sc.nextLine().trim();
+                        System.out.print("Nuevo teléfono: ");
+                        String newPhone = sc.nextLine().trim();
+                        System.out.print("Nuevo tipo de cuenta: ");
+                        String newType = sc.nextLine().trim();
+                        System.out.print("Nueva dirección: ");
+                        String newAddress = sc.nextLine().trim();
+
+                        Account updated = new Account(idUp, newHolder, newEmail, newPhone, newType, newAddress);
+                        accountService.save(updated);
+                        System.out.println("✅ Cuenta actualizada correctamente.");
+                    }, () -> System.out.println("❌ No se encontró la cuenta con número " + idUp));
                     break;
-                case "5":
-                    System.out.print("[" + entityName + "] Eliminar - ingrese id: ");
+
+                case "5": // DELETE
+                    System.out.print("Ingrese el número de cuenta que desea eliminar: ");
                     String idDel = sc.nextLine().trim();
-                    System.out.println("Eliminar " + entityName + " id=" + idDel + " - placeholder");
-                    accountService.deleteById(idDel);
+                    boolean deleted = accountService.deleteById(idDel);
+                    if (deleted)
+                        System.out.println("✅ Cuenta eliminada correctamente.");
+                    else
+                        System.out.println("❌ No se encontró una cuenta con ese número.");
                     break;
+
                 case "0":
                     back = true;
                     break;
+
                 default:
-                    System.out.println("Opción no válida. Intente de nuevo.");
+                    System.out.println("❌ Opción no válida. Intente de nuevo.");
             }
         }
     }
